@@ -5,11 +5,45 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "mysql"
+  // url = env("DATABASE_URL")
+}
+
+model Product {
+  @@map("products")
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  reviews     Review[]
+  summery     Summery?
+}
+
+model Review {
+  @@map ("reviews")
+  id        Int      @id @default(autoincrement())
+  author    String   @db.VarChar(255)
+  rating    Int      @db.TinyInt
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  productId Int
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model Summery {
+  @@map("sumeries")
+  id          Int      @id @default(autoincrement())
+  productId   Int      @unique
+  content     String   @db.Text
+  generatedAt DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  product     Product  @relation(fields: [productId], references: [id])
 }
