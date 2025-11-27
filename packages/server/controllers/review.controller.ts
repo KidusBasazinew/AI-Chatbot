@@ -19,4 +19,21 @@ export const reviewController = {
          res.status(500).json({ message: 'Internal server error' });
       }
    },
+
+   summerizeReviews: async (req: Request, res: Response) => {
+      try {
+         const productId = Number(req.params.id);
+
+         if (!productId || isNaN(productId)) {
+            res.status(400).json({ error: 'Invalid product id' });
+         }
+
+         const summary = await reviewService.summerizeReviews(productId);
+
+         return res.status(200).json({ summary: summary });
+      } catch (e) {
+         console.log('Error fetching reviews:', e);
+         res.status(500).json({ message: 'Internal server error' });
+      }
+   },
 };
